@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 class Listing extends Model
 {
@@ -66,7 +67,7 @@ class Listing extends Model
     public function scopeActive($query)
     {
         return $query->where('status', 'active')
-                    ->where('expires_at', '>', now());
+                    ->where('expires_at', '>', Carbon::now());
     }
 
     public function scopeByCategory($query, $categoryId)
@@ -105,7 +106,7 @@ class Listing extends Model
 
     public function isExpired()
     {
-        return $this->expires_at < now();
+        return $this->expires_at < Carbon::now();
     }
 
     public function isActive()
@@ -121,7 +122,7 @@ class Listing extends Model
     public function renew()
     {
         $this->update([
-            'expires_at' => now()->addDays(30),
+            'expires_at' => Carbon::now()->addDays(30),
             'status' => 'active'
         ]);
     }

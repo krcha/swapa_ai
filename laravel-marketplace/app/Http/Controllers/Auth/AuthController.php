@@ -11,13 +11,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
     /**
      * Register a new user
      */
-    public function register(Request $request)
+    public function register(Request $request): JsonResponse
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -110,7 +111,7 @@ class AuthController extends Controller
     /**
      * Login user
      */
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -170,7 +171,7 @@ class AuthController extends Controller
     /**
      * Logout user
      */
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         try {
             $user = $request->user();
@@ -203,7 +204,7 @@ class AuthController extends Controller
     /**
      * Get current user profile
      */
-    public function profile(Request $request)
+    public function profile(Request $request): JsonResponse
     {
         try {
             $user = $request->user();
@@ -238,7 +239,7 @@ class AuthController extends Controller
     /**
      * Update user profile
      */
-    public function updateProfile(Request $request)
+    public function updateProfile(Request $request): JsonResponse
     {
         try {
             $user = $request->user();

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class TokenTransaction extends Model
 {
@@ -48,21 +49,21 @@ class TokenTransaction extends Model
 
     public function scopeExpired($query)
     {
-        return $query->where('expires_at', '<', now());
+        return $query->where('expires_at', '<', Carbon::now());
     }
 
     public function scopeValid($query)
     {
         return $query->where(function ($q) {
             $q->whereNull('expires_at')
-              ->orWhere('expires_at', '>', now());
+              ->orWhere('expires_at', '>', Carbon::now());
         });
     }
 
     // Helper methods
     public function isExpired()
     {
-        return $this->expires_at && $this->expires_at < now();
+        return $this->expires_at && $this->expires_at < Carbon::now();
     }
 
     public function isCredit()
@@ -83,7 +84,7 @@ class TokenTransaction extends Model
             'type' => 'credit',
             'amount' => $amount,
             'description' => 'Monthly free tokens',
-            'expires_at' => now()->addMonth(),
+            'expires_at' => Carbon::now()->addMonth(),
         ]);
     }
 
