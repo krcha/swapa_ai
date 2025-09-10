@@ -1,0 +1,176 @@
+{
+  "githubConfig": {
+    "repository": "laravel-marketplace-agents",
+    "baseBranch": "main",
+    "agentBranches": {
+      "orchestrator": {
+        "branchName": "orchestrator-coordination",
+        "description": "Supreme coordinator branch for system-wide decisions",
+        "permissions": ["merge_all", "create_branches", "manage_workflows"],
+        "autoMerge": false,
+        "requiresReview": true
+      },
+      "critical_thinker": {
+        "branchName": "critical-analysis",
+        "description": "Devil's advocate branch for challenging decisions",
+        "permissions": ["review_all", "flag_issues", "propose_alternatives"],
+        "autoMerge": false,
+        "requiresReview": false
+      },
+      "senior_dev": {
+        "branchName": "architecture-design",
+        "description": "System architecture and design decisions",
+        "permissions": ["merge_architecture", "approve_tech_stack"],
+        "autoMerge": false,
+        "requiresReview": true
+      },
+      "supervisor": {
+        "branchName": "quality-assurance",
+        "description": "Code quality and integration oversight",
+        "permissions": ["merge_approved", "quality_gates"],
+        "autoMerge": false,
+        "requiresReview": true
+      },
+      "backend": {
+        "branchName": "backend-development",
+        "description": "Laravel backend development and APIs",
+        "permissions": ["merge_backend", "api_development"],
+        "autoMerge": false,
+        "requiresReview": true
+      },
+      "frontend": {
+        "branchName": "frontend-development",
+        "description": "Blade templates and frontend implementation",
+        "permissions": ["merge_frontend", "ui_development"],
+        "autoMerge": false,
+        "requiresReview": true
+      },
+      "database": {
+        "branchName": "database-design",
+        "description": "Database schema and optimization",
+        "permissions": ["merge_database", "schema_changes"],
+        "autoMerge": false,
+        "requiresReview": true
+      },
+      "integration": {
+        "branchName": "external-integrations",
+        "description": "SMS, payment, and external service integrations",
+        "permissions": ["merge_integrations", "api_integrations"],
+        "autoMerge": false,
+        "requiresReview": true
+      },
+      "devops": {
+        "branchName": "deployment-infrastructure",
+        "description": "Deployment, CI/CD, and infrastructure management",
+        "permissions": ["merge_devops", "deployment_management"],
+        "autoMerge": false,
+        "requiresReview": true
+      },
+      "debug_doc": {
+        "branchName": "debug-documentation",
+        "description": "Debugging, documentation, and rollback management",
+        "permissions": ["merge_docs", "rollback_management"],
+        "autoMerge": false,
+        "requiresReview": false
+      }
+    },
+    "workflowBranches": {
+      "development": {
+        "branchName": "development",
+        "description": "Active development integration branch",
+        "sourceBranches": ["backend-development", "frontend-development", "database-design"],
+        "autoMerge": false,
+        "requiresReview": true
+      },
+      "staging": {
+        "branchName": "staging",
+        "description": "Pre-production testing and integration",
+        "sourceBranches": ["development", "external-integrations"],
+        "autoMerge": false,
+        "requiresReview": true
+      },
+      "production": {
+        "branchName": "main",
+        "description": "Production-ready code",
+        "sourceBranches": ["staging"],
+        "autoMerge": false,
+        "requiresReview": true,
+        "requiresApproval": ["orchestrator", "supervisor"]
+      }
+    },
+    "branchProtection": {
+      "main": {
+        "requiredStatusChecks": ["tests", "build", "security-scan"],
+        "enforceAdmins": true,
+        "requiredPullRequestReviews": 2,
+        "dismissStaleReviews": true,
+        "requireCodeOwnerReviews": true
+      },
+      "staging": {
+        "requiredStatusChecks": ["tests", "build"],
+        "enforceAdmins": false,
+        "requiredPullRequestReviews": 1,
+        "dismissStaleReviews": true
+      },
+      "development": {
+        "requiredStatusChecks": ["tests"],
+        "enforceAdmins": false,
+        "requiredPullRequestReviews": 1
+      }
+    },
+    "agentWorkflows": {
+      "orchestrator": {
+        "triggers": ["agent_switch", "system_decision", "emergency_response"],
+        "actions": ["create_branch", "assign_reviewers", "merge_decision"],
+        "notifications": ["all_agents", "critical_thinker"]
+      },
+      "critical_thinker": {
+        "triggers": ["architecture_review", "major_decision", "risk_assessment"],
+        "actions": ["create_issue", "request_changes", "propose_alternative"],
+        "notifications": ["orchestrator", "senior_dev"]
+      },
+      "development_agents": {
+        "triggers": ["feature_development", "bug_fix", "integration"],
+        "actions": ["create_pull_request", "run_tests", "request_review"],
+        "notifications": ["supervisor", "orchestrator"]
+      }
+    },
+    "integrationRules": {
+      "agentCoordination": {
+        "conflictResolution": "orchestrator_decision",
+        "mergeOrder": ["database", "backend", "frontend", "integration"],
+        "rollbackTrigger": "critical_issues",
+        "escalationPath": "supervisor -> orchestrator"
+      },
+      "qualityGates": {
+        "codeReview": "required_for_all_merges",
+        "testing": "unit_tests_and_integration_tests",
+        "security": "automated_security_scan",
+        "performance": "performance_benchmarks"
+      },
+      "deploymentPipeline": {
+        "development": "auto_deploy_to_dev_environment",
+        "staging": "manual_approval_required",
+        "production": "orchestrator_and_supervisor_approval"
+      }
+    }
+  },
+  "agentBranchMapping": {
+    "orchestrator": "orchestrator-coordination",
+    "critical_thinker": "critical-analysis", 
+    "senior_dev": "architecture-design",
+    "supervisor": "quality-assurance",
+    "backend": "backend-development",
+    "frontend": "frontend-development",
+    "database": "database-design",
+    "integration": "external-integrations",
+    "devops": "deployment-infrastructure",
+    "debug_doc": "debug-documentation"
+  },
+  "branchStatus": {
+    "activeBranches": [],
+    "pendingMerges": [],
+    "conflictBranches": [],
+    "lastSync": null
+  }
+}

@@ -1,0 +1,133 @@
+{
+    "agentHierarchy": {
+      "orchestrator": {
+        "name": "Orchestrator Agent",
+        "role": "system_coordinator",
+        "authority": "supreme",
+        "responsibilities": [
+          "Dynamic agent assignment and task distribution",
+          "Performance monitoring and agent switching",
+          "Resource optimization and workload balancing",
+          "System-wide decision making and coordination"
+        ],
+        "permissions": ["assign_tasks", "switch_agents", "modify_hierarchy", "system_override"],
+        "reports_to": "none"
+      },
+      "critical_thinker": {
+        "name": "Critical Thinker Agent",
+        "role": "devils_advocate",
+        "authority": "advisory",
+        "responsibilities": [
+          "Challenge architectural decisions and identify weaknesses",
+          "Question assumptions and validate business logic",
+          "Risk assessment and vulnerability identification",
+          "Alternative solution proposals and devil's advocate role"
+        ],
+        "permissions": ["question_decisions", "flag_concerns", "propose_alternatives", "escalate_risks"],
+        "reports_to": "orchestrator",
+        "triggers": ["planning_phase", "major_decisions", "architecture_review", "pre_deployment"]
+      },
+      "senior_dev": {
+        "name": "Senior Developer Agent",
+        "role": "system_architect",
+        "authority": "high",
+        "responsibilities": [
+          "Overall system architecture and design patterns",
+          "Technology stack decisions and framework choices",
+          "Performance architecture and scalability planning",
+          "Security architecture and best practices"
+        ],
+        "permissions": ["architecture_decisions", "tech_stack_approval", "design_patterns"],
+        "reports_to": "orchestrator",
+        "collaborates_with": ["critical_thinker", "supervisor"]
+      },
+      "supervisor": {
+        "name": "Supervisor Agent",
+        "role": "quality_assurance",
+        "authority": "medium-high",
+        "responsibilities": [
+          "Code quality enforcement and review",
+          "Integration validation and testing oversight",
+          "Performance monitoring and optimization",
+          "Best practices compliance and standards enforcement"
+        ],
+        "permissions": ["code_approval", "quality_gates", "integration_validation"],
+        "reports_to": "orchestrator",
+        "manages": ["backend", "frontend", "database", "integration", "devops"]
+      },
+      "development_agents": {
+        "backend": {
+          "name": "Backend Agent",
+          "role": "backend_developer",
+          "authority": "medium",
+          "specialization": ["laravel", "php", "apis", "business_logic", "authentication"],
+          "reports_to": "supervisor"
+        },
+        "frontend": {
+          "name": "Frontend Agent", 
+          "role": "frontend_developer",
+          "authority": "medium",
+          "specialization": ["blade_templates", "tailwindcss", "javascript", "user_interfaces"],
+          "reports_to": "supervisor"
+        },
+        "database": {
+          "name": "Database Agent",
+          "role": "database_developer", 
+          "authority": "medium",
+          "specialization": ["mysql", "migrations", "relationships", "optimization"],
+          "reports_to": "supervisor"
+        },
+        "integration": {
+          "name": "Integration Agent",
+          "role": "integration_developer",
+          "authority": "medium", 
+          "specialization": ["apis", "sms", "payments", "external_services"],
+          "reports_to": "supervisor"
+        },
+        "devops": {
+          "name": "DevOps Agent",
+          "role": "devops_engineer",
+          "authority": "medium",
+          "specialization": ["deployment", "cicd", "monitoring", "infrastructure"],
+          "reports_to": "supervisor"
+        }
+      },
+      "debug_doc": {
+        "name": "Debug & Documentation Agent",
+        "role": "support_specialist",
+        "authority": "medium",
+        "responsibilities": [
+          "System debugging and error analysis",
+          "Documentation generation and maintenance", 
+          "Rollback coordination and state management",
+          "System monitoring and health checks"
+        ],
+        "permissions": ["system_debug", "rollback_execution", "documentation_update"],
+        "reports_to": "supervisor"
+      }
+    },
+    "workflowStates": {
+      "INITIALIZATION": ["orchestrator", "critical_thinker"],
+      "PLANNING": ["orchestrator", "critical_thinker", "senior_dev"],
+      "ARCHITECTURE_REVIEW": ["critical_thinker", "senior_dev", "supervisor"],
+      "DEVELOPMENT": ["supervisor", "backend", "frontend", "database", "integration"],
+      "TESTING": ["supervisor", "debug_doc", "all_dev_agents"],
+      "INTEGRATION": ["supervisor", "debug_doc", "orchestrator"],
+      "DEBUGGING": ["debug_doc", "orchestrator", "relevant_specialists"],
+      "DEPLOYMENT": ["devops", "supervisor", "orchestrator"],
+      "ROLLBACK": ["debug_doc", "orchestrator", "supervisor"]
+    },
+    "agentSwitching": {
+      "performance_thresholds": {
+        "task_completion_time": 120,
+        "code_quality_score": 0.8,
+        "integration_success_rate": 0.9
+      },
+      "switching_criteria": [
+        "performance_below_threshold",
+        "specialized_expertise_needed", 
+        "workload_rebalancing",
+        "agent_conflict_resolution"
+      ]
+    }
+  }

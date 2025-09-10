@@ -1,0 +1,119 @@
+{
+    "systemState": {
+      "current": "INITIALIZATION",
+      "timestamp": "2025-01-15T10:00:00Z",
+      "activeAgents": ["orchestrator"],
+      "pendingTasks": [],
+      "completedMilestones": []
+    },
+    "stateTransitions": {
+      "INITIALIZATION": {
+        "description": "System setup and agent initialization",
+        "requiredAgents": ["orchestrator", "critical_thinker"],
+        "completionCriteria": [
+          "agent_hierarchy_established",
+          "project_structure_created",
+          "initial_requirements_analyzed"
+        ],
+        "nextStates": ["PLANNING"]
+      },
+      "PLANNING": {
+        "description": "Requirements analysis and system design planning",
+        "requiredAgents": ["orchestrator", "critical_thinker", "senior_dev"],
+        "completionCriteria": [
+          "requirements_validated_by_critical_thinker",
+          "system_architecture_proposed",
+          "technology_stack_decided",
+          "risk_assessment_completed"
+        ],
+        "nextStates": ["ARCHITECTURE_REVIEW", "ROLLBACK"]
+      },
+      "ARCHITECTURE_REVIEW": {
+        "description": "Critical review of proposed architecture",
+        "requiredAgents": ["critical_thinker", "senior_dev", "supervisor"],
+        "completionCriteria": [
+          "architecture_challenged_and_refined",
+          "potential_issues_identified",
+          "alternative_solutions_evaluated",
+          "final_architecture_approved"
+        ],
+        "nextStates": ["DEVELOPMENT", "PLANNING", "ROLLBACK"]
+      },
+      "DEVELOPMENT": {
+        "description": "Active development by specialized agents",
+        "requiredAgents": ["supervisor", "backend", "frontend", "database", "integration"],
+        "completionCriteria": [
+          "core_features_implemented",
+          "integration_points_working",
+          "tests_passing",
+          "code_review_approved"
+        ],
+        "nextStates": ["TESTING", "DEBUGGING", "ROLLBACK"]
+      },
+      "TESTING": {
+        "description": "Comprehensive system testing and validation",
+        "requiredAgents": ["supervisor", "debug_doc"],
+        "completionCriteria": [
+          "unit_tests_passing",
+          "integration_tests_passing", 
+          "performance_benchmarks_met",
+          "security_validation_complete"
+        ],
+        "nextStates": ["INTEGRATION", "DEBUGGING", "ROLLBACK"]
+      },
+      "INTEGRATION": {
+        "description": "Final system integration and coordination",
+        "requiredAgents": ["supervisor", "debug_doc", "orchestrator"],
+        "completionCriteria": [
+          "all_components_integrated",
+          "end_to_end_testing_complete",
+          "documentation_updated",
+          "deployment_ready"
+        ],
+        "nextStates": ["DEPLOYMENT", "DEBUGGING", "ROLLBACK"]
+      },
+      "DEBUGGING": {
+        "description": "Issue identification and resolution",
+        "requiredAgents": ["debug_doc", "orchestrator"],
+        "dynamicAgents": "based_on_issue_type",
+        "completionCriteria": [
+          "issues_identified_and_documented",
+          "root_cause_analysis_complete",
+          "fixes_implemented_and_tested",
+          "system_stability_verified"
+        ],
+        "nextStates": ["DEVELOPMENT", "TESTING", "INTEGRATION", "ROLLBACK"]
+      },
+      "DEPLOYMENT": {
+        "description": "System deployment and go-live",
+        "requiredAgents": ["devops", "supervisor", "orchestrator"],
+        "completionCriteria": [
+          "production_environment_ready",
+          "deployment_scripts_tested",
+          "monitoring_systems_active",
+          "rollback_procedures_ready"
+        ],
+        "nextStates": ["MONITORING", "ROLLBACK"]
+      },
+      "ROLLBACK": {
+        "description": "System rollback to previous stable state",
+        "requiredAgents": ["debug_doc", "orchestrator", "supervisor"],
+        "completionCriteria": [
+          "rollback_point_identified",
+          "rollback_executed_successfully", 
+          "system_stability_verified",
+          "root_cause_documented"
+        ],
+        "nextStates": ["PLANNING", "DEVELOPMENT", "TESTING"]
+      }
+    },
+    "rollbackPoints": {},
+    "debugContext": {
+      "activeIssues": [],
+      "performanceMetrics": {},
+      "agentPerformance": {},
+      "integrationStatus": {}
+    },
+    "criticalThinkerChallenges": [],
+    "orchestratorDecisions": []
+  }

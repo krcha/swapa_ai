@@ -1,0 +1,212 @@
+{
+  "communicationProtocols": {
+    "messageTypes": {
+      "task_assignment": {
+        "description": "Orchestrator assigns tasks to specific agents",
+        "priority": "high",
+        "acknowledgment_required": true,
+        "response_timeout": 300
+      },
+      "status_update": {
+        "description": "Agents report progress and status",
+        "priority": "medium",
+        "acknowledgment_required": false,
+        "response_timeout": 0
+      },
+      "critical_issue": {
+        "description": "Urgent issues requiring immediate attention",
+        "priority": "critical",
+        "acknowledgment_required": true,
+        "response_timeout": 60
+      },
+      "collaboration_request": {
+        "description": "Request for collaboration between agents",
+        "priority": "medium",
+        "acknowledgment_required": true,
+        "response_timeout": 180
+      },
+      "decision_required": {
+        "description": "Decisions requiring orchestrator or supervisor input",
+        "priority": "high",
+        "acknowledgment_required": true,
+        "response_timeout": 120
+      },
+      "escalation": {
+        "description": "Issues escalated to higher authority",
+        "priority": "critical",
+        "acknowledgment_required": true,
+        "response_timeout": 30
+      }
+    },
+    "communicationChannels": {
+      "orchestrator": {
+        "receives": ["all_message_types"],
+        "sends": ["task_assignment", "decision_required", "escalation"],
+        "priority_handling": true,
+        "response_requirements": "immediate_for_critical"
+      },
+      "critical_thinker": {
+        "receives": ["task_assignment", "collaboration_request", "decision_required"],
+        "sends": ["critical_issue", "escalation", "collaboration_request"],
+        "priority_handling": true,
+        "response_requirements": "within_timeout"
+      },
+      "senior_dev": {
+        "receives": ["task_assignment", "collaboration_request", "decision_required"],
+        "sends": ["status_update", "collaboration_request", "escalation"],
+        "priority_handling": true,
+        "response_requirements": "within_timeout"
+      },
+      "supervisor": {
+        "receives": ["task_assignment", "status_update", "collaboration_request", "escalation"],
+        "sends": ["task_assignment", "decision_required", "escalation"],
+        "priority_handling": true,
+        "response_requirements": "within_timeout"
+      },
+      "development_agents": {
+        "receives": ["task_assignment", "collaboration_request"],
+        "sends": ["status_update", "collaboration_request", "escalation"],
+        "priority_handling": false,
+        "response_requirements": "within_timeout"
+      },
+      "debug_doc": {
+        "receives": ["task_assignment", "critical_issue", "escalation"],
+        "sends": ["status_update", "critical_issue", "escalation"],
+        "priority_handling": true,
+        "response_requirements": "immediate_for_critical"
+      }
+    },
+    "messageFormat": {
+      "standard": {
+        "messageId": "unique_identifier",
+        "timestamp": "ISO_8601_timestamp",
+        "sender": "agent_name",
+        "recipients": ["agent_list"],
+        "messageType": "message_type",
+        "priority": "priority_level",
+        "subject": "brief_description",
+        "body": "detailed_content",
+        "attachments": ["file_references"],
+        "requiresAcknowledgment": true,
+        "responseTimeout": 300
+      },
+      "critical": {
+        "messageId": "unique_identifier",
+        "timestamp": "ISO_8601_timestamp",
+        "sender": "agent_name",
+        "recipients": ["orchestrator", "supervisor"],
+        "messageType": "critical_issue",
+        "priority": "critical",
+        "subject": "URGENT: brief_description",
+        "body": "detailed_content_with_impact_assessment",
+        "attachments": ["error_logs", "screenshots"],
+        "requiresAcknowledgment": true,
+        "responseTimeout": 60,
+        "escalationPath": ["orchestrator", "supervisor"]
+      }
+    },
+    "coordinationRules": {
+      "taskAssignment": {
+        "orchestrator_assigns": "all_tasks",
+        "supervisor_assigns": "development_tasks",
+        "agent_self_assigns": "specialized_tasks",
+        "conflict_resolution": "orchestrator_decision"
+      },
+      "collaboration": {
+        "backend_frontend": "required_for_ui_integration",
+        "database_backend": "required_for_data_operations",
+        "integration_all": "required_for_external_services",
+        "supervisor_all": "required_for_quality_approval"
+      },
+      "escalation": {
+        "agent_to_supervisor": "quality_issues",
+        "supervisor_to_orchestrator": "architectural_decisions",
+        "any_to_orchestrator": "critical_issues",
+        "orchestrator_to_critical_thinker": "major_decisions"
+      }
+    },
+    "notificationSystem": {
+      "immediate": {
+        "critical_issues": ["orchestrator", "supervisor", "debug_doc"],
+        "system_failures": ["orchestrator", "devops", "debug_doc"],
+        "security_breaches": ["orchestrator", "senior_dev", "supervisor"]
+      },
+      "scheduled": {
+        "daily_standup": "all_active_agents",
+        "weekly_review": ["orchestrator", "supervisor", "senior_dev"],
+        "milestone_updates": "all_agents"
+      },
+      "event_based": {
+        "task_completion": ["orchestrator", "supervisor"],
+        "code_review_required": ["supervisor", "senior_dev"],
+        "integration_ready": ["supervisor", "debug_doc"],
+        "deployment_ready": ["orchestrator", "devops", "supervisor"]
+      }
+    }
+  },
+  "agentCoordination": {
+    "workflowCoordination": {
+      "parallel_work": {
+        "backend_frontend": "independent_development_with_interface_contracts",
+        "database_integration": "database_first_then_integration",
+        "testing_documentation": "parallel_with_development"
+      },
+      "sequential_work": {
+        "architecture_development": "architecture_first_then_development",
+        "development_testing": "development_first_then_testing",
+        "testing_deployment": "testing_first_then_deployment"
+      },
+      "collaborative_work": {
+        "api_design": "backend_frontend_together",
+        "database_schema": "database_backend_together",
+        "integration_testing": "all_agents_together"
+      }
+    },
+    "conflictResolution": {
+      "technical_conflicts": {
+        "resolution_agent": "senior_dev",
+        "escalation_path": "orchestrator",
+        "decision_criteria": "best_practices_and_architecture"
+      },
+      "priority_conflicts": {
+        "resolution_agent": "orchestrator",
+        "escalation_path": "none",
+        "decision_criteria": "business_value_and_urgency"
+      },
+      "resource_conflicts": {
+        "resolution_agent": "orchestrator",
+        "escalation_path": "none",
+        "decision_criteria": "workload_balance_and_expertise"
+      }
+    },
+    "knowledgeSharing": {
+      "documentation_updates": {
+        "responsible_agent": "debug_doc",
+        "contributors": "all_agents",
+        "update_triggers": ["feature_completion", "bug_fix", "process_change"]
+      },
+      "best_practices": {
+        "responsible_agent": "senior_dev",
+        "contributors": "all_agents",
+        "update_triggers": ["code_review", "performance_analysis", "security_audit"]
+      },
+      "lessons_learned": {
+        "responsible_agent": "orchestrator",
+        "contributors": "all_agents",
+        "update_triggers": ["project_milestone", "issue_resolution", "rollback"]
+      }
+    }
+  },
+  "communicationHistory": {
+    "messageLog": [],
+    "responseTimes": {},
+    "escalationHistory": [],
+    "collaborationMetrics": {}
+  },
+  "currentCommunications": {
+    "activeMessages": [],
+    "pendingResponses": [],
+    "escalatedIssues": [],
+    "collaborationSessions": []
+  }
+}
