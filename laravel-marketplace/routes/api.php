@@ -10,6 +10,8 @@ use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\PhoneVerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +53,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/verify/sms', [VerificationController::class, 'verifySMS']);
     Route::post('/verify/resend', [VerificationController::class, 'resendVerification']);
 
-    // Token routes
+    // Subscription routes
+    Route::get('/plans', [SubscriptionController::class, 'index']);
+    Route::get('/subscription/current', [SubscriptionController::class, 'current']);
+    Route::get('/subscription/history', [SubscriptionController::class, 'history']);
+    Route::get('/subscription/payments', [SubscriptionController::class, 'payments']);
+    Route::post('/subscription/subscribe', [SubscriptionController::class, 'subscribe']);
+    Route::post('/subscription/cancel', [SubscriptionController::class, 'cancel']);
+    Route::post('/subscription/renew', [SubscriptionController::class, 'renew']);
+
+    // Phone verification routes
+    Route::post('/phone-verification/send', [PhoneVerificationController::class, 'send']);
+    Route::post('/phone-verification/verify', [PhoneVerificationController::class, 'verify']);
+    Route::post('/phone-verification/resend', [PhoneVerificationController::class, 'resend']);
+    Route::get('/phone-verification/status', [PhoneVerificationController::class, 'status']);
+
+    // Token routes (legacy - keeping for backward compatibility)
     Route::get('/tokens/balance', [TokenController::class, 'balance']);
     Route::get('/tokens/transactions', [TokenController::class, 'transactions']);
     Route::post('/tokens/purchase', [TokenController::class, 'purchase']);

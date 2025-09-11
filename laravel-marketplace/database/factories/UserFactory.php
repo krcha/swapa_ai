@@ -4,79 +4,44 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
     /**
-     * The current password being used by the factory.
+     * The name of the factory's corresponding model.
+     *
+     * @var string
      */
-    protected static ?string $password;
+    protected $model = User::class;
 
     /**
      * Define the model's default state.
      *
-     * @return array<string, mixed>
+     * @return array
      */
-    public function definition(): array
+    public function definition()
     {
         return [
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
-            'email' => fake()->unique()->safeEmail(),
-            'phone' => '+381' . fake()->numerify('########'),
-            'jmbg_hash' => hash('sha256', fake()->numerify('#############') . config('app.key')),
-            'is_verified' => fake()->boolean(80),
-            'is_sms_verified' => fake()->boolean(70),
-            'is_email_verified' => fake()->boolean(75),
-            'is_age_verified' => true,
-            'is_admin' => false,
-            'email_verified_at' => fake()->optional(0.7)->dateTimeBetween('-1 year', 'now'),
-            'password' => static::$password ??= Hash::make('password'),
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'email_verified_at' => now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
         ];
     }
 
     /**
      * Indicate that the model's email address should be unverified.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function unverified(): static
+    public function unverified()
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-            'is_email_verified' => false,
-        ]);
-    }
-
-    /**
-     * Indicate that the model should be fully verified.
-     */
-    public function verified(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'is_verified' => true,
-            'is_sms_verified' => true,
-            'is_email_verified' => true,
-            'is_age_verified' => true,
-            'email_verified_at' => now(),
-        ]);
-    }
-
-    /**
-     * Indicate that the model should be an admin.
-     */
-    public function admin(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'is_admin' => true,
-            'is_verified' => true,
-            'is_sms_verified' => true,
-            'is_email_verified' => true,
-            'is_age_verified' => true,
-        ]);
+        return $this->state(function (array $attributes) {
+            return [
+                'email_verified_at' => null,
+            ];
+        });
     }
 }

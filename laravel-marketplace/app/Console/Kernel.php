@@ -9,52 +9,21 @@ class Kernel extends ConsoleKernel
 {
     /**
      * Define the application's command schedule.
+     *
+     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @return void
      */
-    protected function schedule(Schedule $schedule): void
+    protected function schedule(Schedule $schedule)
     {
-        // Monthly token distribution - runs on the 1st of every month at 9:00 AM
-        $schedule->command('tokens:distribute-monthly')
-                 ->monthlyOn(1, '09:00')
-                 ->timezone('Europe/Belgrade');
-
-        // Clean up expired tokens - runs daily at 2:00 AM
-        $schedule->call(function () {
-            \App\Models\TokenTransaction::where('expires_at', '<', now())
-                ->where('type', 'credit')
-                ->delete();
-        })->dailyAt('02:00')->timezone('Europe/Belgrade');
-
-        // Clean up expired listings - runs daily at 3:00 AM
-        $schedule->call(function () {
-            \App\Models\Listing::where('expires_at', '<', now())
-                ->where('status', 'active')
-                ->update(['status' => 'expired']);
-        })->dailyAt('03:00')->timezone('Europe/Belgrade');
-
-        // Send listing expiration reminders - runs daily at 10:00 AM
-        $schedule->call(function () {
-            $expiringListings = \App\Models\Listing::where('expires_at', '<=', now()->addDays(3))
-                ->where('expires_at', '>', now())
-                ->where('status', 'active')
-                ->with('user')
-                ->get();
-
-            foreach ($expiringListings as $listing) {
-                // Send notification to user about expiring listing
-                // This would typically send an email or push notification
-                \Log::info('Listing expiring soon', [
-                    'listing_id' => $listing->id,
-                    'user_id' => $listing->user_id,
-                    'expires_at' => $listing->expires_at
-                ]);
-            }
-        })->dailyAt('10:00')->timezone('Europe/Belgrade');
+        // $schedule->command('inspire')->hourly();
     }
 
     /**
      * Register the commands for the application.
+     *
+     * @return void
      */
-    protected function commands(): void
+    protected function commands()
     {
         $this->load(__DIR__.'/Commands');
 

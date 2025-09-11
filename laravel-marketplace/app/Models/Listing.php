@@ -21,19 +21,25 @@ class Listing extends Model
         'storage',
         'color',
         'battery_health',
+        'model_year',
         'screen_condition',
         'body_condition',
+        'functionality',
         'carrier',
         'contact_preference',
         'status',
         'expires_at',
         'view_count',
+        'has_priority_listing',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'expires_at' => 'datetime',
         'view_count' => 'integer',
+        'has_priority_listing' => 'boolean',
+        'model_year' => 'integer',
+        'battery_health' => 'integer',
     ];
 
     // Relationships
@@ -60,6 +66,26 @@ class Listing extends Model
     public function conversations()
     {
         return $this->hasMany(Conversation::class);
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites');
+    }
+
+    public function priceAlerts()
+    {
+        return $this->hasMany(PriceAlert::class);
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
     }
 
     // Scopes

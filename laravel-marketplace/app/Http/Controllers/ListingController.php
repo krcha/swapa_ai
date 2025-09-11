@@ -14,45 +14,97 @@ class ListingController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Listing::with(['user', 'category', 'brand', 'images'])
-            ->active();
-
-        // Search
-        if ($request->has('search') && $request->search) {
-            $query->search($request->search);
-        }
-
-        // Filters
-        if ($request->has('category_id') && $request->category_id) {
-            $query->byCategory($request->category_id);
-        }
-
-        if ($request->has('brand_id') && $request->brand_id) {
-            $query->byBrand($request->brand_id);
-        }
-
-        if ($request->has('condition') && $request->condition) {
-            $query->byCondition($request->condition);
-        }
-
-        if ($request->has('min_price') && $request->min_price) {
-            $query->byPriceRange($request->min_price, $request->max_price ?? 999999);
-        }
-
-        // Sorting
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
+        $query = Listing::where('status', 'active')->with(['user', 'brand', 'category']);
         
-        if (in_array($sortBy, ['created_at', 'price', 'view_count'])) {
-            $query->orderBy($sortBy, $sortOrder);
+        // Apply brand filter (match exact brand names)
+        if ($request->filled('brand') && $request->brand !== 'all') {
+            $query->whereHas('brand', function($q) use ($request) {
+                $q->where('name', $request->brand);
+            });
         }
-
-        $listings = $query->paginate(20);
-
-        return response()->json([
-            'success' => true,
-            'data' => $listings
-        ]);
+        
+        // Apply category filter
+        if ($request->filled('category') && $request->category !== 'all') {
+            $query->whereHas('category', function($q) use ($request) {
+                $q->where('name', $request->category);
+            });
+        }
+        
+        // Apply condition filter
+        if ($request->filled('condition') && $request->condition !== 'all') {
+            $query->where('condition', $request->condition);
+        }
+        
+        // Price range filters
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', (float)$request->min_price);
+        }
+        
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', (float)$request->max_price);
+        }
+        
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                  ->orWhere('description', 'LIKE', "%{$search}%")
+                  ->orWhereHas('brand', function($brandQuery) use ($search) {
+                      $brandQuery->where('name', 'LIKE', "%{$search}%");
+                  })
+                  ->orWhereHas('category', function($categoryQuery) use ($search) {
+                      $categoryQuery->where('name', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+        
+        // Sort options
+        $sortBy = $request->get('sort', 'created_at');
+        $sortOrder = $request->get('order', 'desc');
+        
+        switch ($sortBy) {
+            case 'price':
+                $query->orderBy('price', $sortOrder);
+                break;
+            case 'condition':
+                $query->orderByRaw("CASE 
+                    WHEN condition = 'like_new' THEN 1 
+                    WHEN condition = 'excellent' THEN 2 
+                    WHEN condition = 'good' THEN 3 
+                    WHEN condition = 'fair' THEN 4 
+                    ELSE 5 END");
+                break;
+            case 'created_at':
+            default:
+                $query->orderBy('created_at', $sortOrder);
+                break;
+        }
+        
+        $listings = $query->paginate(12)->withQueryString();
+        
+        // Get CLEAN brand and category lists (just the names)
+        $brands = Listing::where('status', 'active')
+            ->whereNotNull('brand_id')
+            ->with('brand')
+            ->get()
+            ->pluck('brand.name')
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+            
+        $categories = Listing::where('status', 'active')
+            ->whereNotNull('category_id')
+            ->with('category')
+            ->get()
+            ->pluck('category.name')
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+    
+        return view('listings.index', compact('listings', 'brands', 'categories'));
     }
 
     public function show($id)
@@ -73,10 +125,32 @@ class ListingController extends Controller
     {
         $user = Auth::user();
 
+        // Check if user can create listing (phone verification + quota check)
         if (!$user->canCreateListing()) {
+            $currentPlan = $user->currentPlan();
+            $remainingQuota = $user->getRemainingListingQuota();
+            
+            if (!$user->hasPhoneVerification()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Phone verification is required to create listings. Please verify your phone number first.',
+                    'requires_phone_verification' => true
+                ], 403);
+            }
+            
+            if ($remainingQuota === 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You have reached your monthly listing limit. Upgrade your plan to create more listings.',
+                    'current_plan' => $currentPlan ? $currentPlan->name : 'Free',
+                    'listing_limit' => $currentPlan ? $currentPlan->listing_limit : 1,
+                    'requires_upgrade' => true
+                ], 403);
+            }
+            
             return response()->json([
                 'success' => false,
-                'message' => 'You must be verified and have tokens to create a listing'
+                'message' => 'Unable to create listing. Please check your account status.'
             ], 403);
         }
 
@@ -139,8 +213,8 @@ class ListingController extends Controller
             }
         }
 
-        // Consume token
-        TokenTransaction::consumeToken($user, $listing, 'Listing creation');
+        // No token consumption needed for subscription model
+        // Quota is enforced by the subscription system
 
         return response()->json([
             'success' => true,
@@ -206,10 +280,8 @@ class ListingController extends Controller
             ], 403);
         }
 
-        // Refund token if listing is pending
-        if ($listing->status === 'pending') {
-            TokenTransaction::refundToken(Auth::user(), $listing, 'Listing deletion');
-        }
+        // No token refund needed for subscription model
+        // Quota is managed by subscription system
 
         $listing->delete();
 
@@ -231,14 +303,21 @@ class ListingController extends Controller
         }
 
         if (!Auth::user()->canCreateListing()) {
+            $currentPlan = Auth::user()->currentPlan();
+            $remainingQuota = Auth::user()->getRemainingListingQuota();
+            
             return response()->json([
                 'success' => false,
-                'message' => 'You need tokens to renew a listing'
+                'message' => 'You have reached your monthly listing limit. Upgrade your plan to renew listings.',
+                'current_plan' => $currentPlan ? $currentPlan->name : 'Free',
+                'listing_limit' => $currentPlan ? $currentPlan->listing_limit : 1,
+                'remaining_quota' => $remainingQuota,
+                'requires_upgrade' => true
             ], 403);
         }
 
         $listing->renew();
-        TokenTransaction::consumeToken(Auth::user(), $listing, 'Listing renewal');
+        // No token consumption needed for subscription model
 
         return response()->json([
             'success' => true,

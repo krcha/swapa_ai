@@ -1,126 +1,140 @@
-# Laravel Marketplace - Used Phone Marketplace
+# Laravel Marketplace
 
-A Laravel-based marketplace for buying and selling used phones and accessories in Serbia.
+A subscription-based phone marketplace platform built with Laravel 11.
 
 ## Features
 
-- **User Registration & Verification**: JMBG validation, SMS and email verification
-- **Token-Based Listings**: Users get 1 free token per month, can purchase more
-- **Product Management**: Comprehensive listing system with images and details
-- **Communication**: Buyer-seller messaging system
-- **Admin Panel**: Listing approval and user management
-- **Search & Filtering**: Advanced search and filtering capabilities
+- **User Authentication & Verification**: Phone verification system
+- **Subscription Management**: Multiple pricing tiers
+- **Product Listings**: Buy and sell phones
+- **Real-time Chat**: Direct communication between users
+- **Admin Dashboard**: Manage users and listings
+- **API-First Design**: RESTful API for all operations
 
-## Technology Stack
+## Tech Stack
 
-- **Laravel 11** with PHP 8.2
-- **MySQL 8** for database
-- **Redis** for caching and queues
-- **Laravel Sanctum** for API authentication
-- **TailwindCSS** for frontend styling
+- **Backend**: Laravel 11, PHP 8.2+
+- **Database**: MySQL 8
+- **Frontend**: Blade templates, TailwindCSS, Alpine.js
+- **Payments**: Stripe integration
+- **SMS**: Twilio integration
+- **Testing**: PHPUnit, Pest
 
 ## Installation
 
-1. Clone the repository
-2. Install dependencies: `composer install`
-3. Copy environment file: `cp .env.example .env`
-4. Generate application key: `php artisan key:generate`
-5. Configure database in `.env` file
-6. Run migrations: `php artisan migrate`
-7. Seed database: `php artisan db:seed`
-8. Start development server: `php artisan serve`
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd laravel-marketplace
+   ```
 
-## API Endpoints
+2. **Install dependencies**
+   ```bash
+   composer install
+   npm install
+   ```
 
-### Authentication
+3. **Environment setup**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. **Database setup**
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
+
+5. **Build assets**
+   ```bash
+   npm run build
+   ```
+
+6. **Start development server**
+   ```bash
+   php artisan serve
+   ```
+
+## Configuration
+
+### Environment Variables
+
+Key environment variables to configure:
+
+```env
+# Database
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel_marketplace
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Stripe
+STRIPE_KEY=pk_test_...
+STRIPE_SECRET=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Twilio
+TWILIO_SID=AC...
+TWILIO_TOKEN=...
+TWILIO_FROM_NUMBER=+1234567890
+
+# SMS
+SMS_DRIVER=twilio
+SMS_FROM_NUMBER=+1234567890
+```
+
+## API Documentation
+
+The API documentation is available at `/api/documentation` when running the application.
+
+### Key Endpoints
+
 - `POST /api/register` - User registration
-- `POST /api/verify-email` - Email verification
-- `POST /api/verify-sms` - SMS verification
+- `POST /api/login` - User login
+- `GET /api/plans` - Get subscription plans
+- `POST /api/subscription/subscribe` - Subscribe to a plan
+- `GET /api/listings` - Get listings
+- `POST /api/listings` - Create listing
+- `POST /api/phone-verification/send` - Send SMS verification
 
-### Listings
-- `GET /api/listings` - Get all listings
-- `GET /api/listings/{id}` - Get specific listing
-- `POST /api/listings` - Create listing (authenticated)
-- `PUT /api/listings/{id}` - Update listing (authenticated)
-- `DELETE /api/listings/{id}` - Delete listing (authenticated)
+## Subscription Plans
 
-### Tokens
-- `GET /api/tokens/balance` - Get token balance
-- `GET /api/tokens/transactions` - Get token transactions
-- `POST /api/tokens/purchase` - Purchase tokens
-
-### Conversations
-- `GET /api/conversations` - Get user conversations
-- `POST /api/conversations` - Start new conversation
-- `POST /api/conversations/{id}/messages` - Send message
-
-### Admin
-- `GET /api/admin/dashboard` - Admin dashboard
-- `GET /api/admin/listings` - Manage listings
-- `POST /api/admin/listings/{id}/approve` - Approve listing
-- `POST /api/admin/listings/{id}/reject` - Reject listing
-
-## Database Schema
-
-### Core Tables
-- `users` - User accounts with verification status
-- `listings` - Product listings
-- `categories` - Product categories
-- `brands` - Product brands
-- `token_transactions` - Token balance and transactions
-- `conversations` - Buyer-seller conversations
-- `messages` - Conversation messages
-- `listing_images` - Product images
-
-## Key Features
-
-### JMBG Validation
-- Serbian national ID validation with checksum
-- Age verification (18+ requirement)
-- Secure hashing of sensitive data
-
-### Token System
-- Monthly free token distribution
-- Token purchase with payment integration
-- Token consumption for listing creation
-- Automatic refund for rejected listings
-
-### Admin Management
-- Listing approval/rejection system
-- User verification management
-- Statistics and analytics dashboard
-- Token transaction monitoring
-
-## Security Features
-
-- JMBG data encryption
-- Secure password hashing
-- API rate limiting
-- CSRF protection
-- Input validation and sanitization
+- **Free**: 2 listings per month, 30-day duration
+- **Tier 1 (€5/month)**: 10 listings per month, 60-day duration
+- **Tier 2 (€15/month)**: 50 listings per month, 90-day duration
+- **Tier 3 (€30/month)**: Unlimited listings, 120-day duration
 
 ## Development
 
 ### Running Tests
+
 ```bash
 php artisan test
 ```
 
 ### Code Style
+
 ```bash
 ./vendor/bin/pint
 ```
 
 ### Database Seeding
+
 ```bash
 php artisan db:seed
 ```
 
-### Monthly Token Distribution
-```bash
-php artisan tokens:distribute-monthly
-```
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Submit a pull request
 
 ## License
 
-This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is licensed under the MIT License.
